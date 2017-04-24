@@ -3,6 +3,7 @@ import pygame
 from pygame import *
 
 from Player import Player
+from event_processing import *
 
 WIN_WIDTH = 400  # Ширина создаваемого окна
 WIN_HEIGHT = 400  # Высота
@@ -24,34 +25,11 @@ def main():
     while 1:
         timer.tick(200)
         for e in pygame.event.get():
-            if e.type == QUIT:
-                raise (SystemExit, "QUIT")
-            if e.type == KEYDOWN:
-                if e.key == K_RIGHT:
-                    right = 1
-                elif e.key == K_LEFT:
-                    right = -1
-                elif e.key == K_UP:
-                    up = -1
-                elif e.key == K_DOWN:
-                    up = 1
-            if e.type == KEYUP:
-                if e.key == K_RIGHT:
-                    right = 0
-                elif e.key == K_LEFT:
-                    right = 0
-                elif e.key == K_UP:
-                    up = 0
-                elif e.key == K_DOWN:
-                    up = 0
+            process_player(e, pf)
 
 
-            if e.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                if pf.rect.collidepoint(pos):
-                    pf.image.fill(Color(0, 100, 0))
 
-        pf.update(right, up)
+        pf.update()
 
         screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
         pf.draw(screen)

@@ -20,13 +20,16 @@ class Player(sprite.Sprite):
         self.image.fill(Color(COLOR))
         self.rect = Rect(x, y, WIDTH, HEIGHT)
 
-    def update(self, right, up):
-        if right:
-            self.xvel = right * MOVE_SPEED
+        self.right = 0
+        self.up = 0
+
+    def update(self):
+        if self.right:
+            self.xvel = self.right * MOVE_SPEED
         else:
             self.xvel = 0
-        if up:
-            self.yvel = up * MOVE_SPEED
+        if self.up:
+            self.yvel = self.up * MOVE_SPEED
         else:
             self.yvel = 0
 

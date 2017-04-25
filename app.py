@@ -31,7 +31,8 @@ def main():
         timer.tick(200)
         for e in pygame.event.get():
             process_player(e, pf)
-        pf.update()
+
+        pf.update(blocks)
 
 
         screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать

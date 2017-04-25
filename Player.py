@@ -17,6 +17,10 @@ class Player(sprite.Sprite):
         self.yvel = 0
         self.x = x
         self.y = y
+
+        self.x_prev_collide = self.x
+        self.y_prev_collide = self.y
+
         self.image = Surface((WIDTH, HEIGHT))
 
         if img:
@@ -30,7 +34,7 @@ class Player(sprite.Sprite):
 
         self.skills = {'athletics': 2.0}
 
-    def update(self):
+    def update(self, world):
         if self.right:
             self.xvel = self.right * MOVE_SPEED * np.log2(1 + (np.log2(self.skills['athletics']))) / 8
         else:
@@ -40,6 +44,8 @@ class Player(sprite.Sprite):
         else:
             self.yvel = 0
 
+        self.collide(world)
+
         self.x += self.xvel
         self.y += self.yvel
         self.rect.x = int(self.x)
@@ -48,3 +54,19 @@ class Player(sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x, self.rect.y))
+
+    def collide(self, platforms):
+        max_collide = max([sprite.collide_rect(self, p) for p in platforms])
+        if max_collide:  # если есть пересечение платформы с игроком\
+            print('block_collide')
+            print('real', self.x, self.y)
+            self.x = self.x_prev_collide
+            self.y = self.y_prev_collide
+        else:
+            print('not_collide')
+            print('real', self.x, self.y)
+            self.x_prev_collide = self.x
+            self.y_prev_collide = self.y
+        print('image', self.rect.x, self.rect.y)
+        print('prev', self.x_prev_collide, self.y_prev_collide)
+        print()

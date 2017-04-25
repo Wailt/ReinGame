@@ -20,7 +20,7 @@ def main():
     bg = Surface((WIN_WIDTH, WIN_HEIGHT))  # Создание видимой поверхности
     # будем использовать как фон
     bg.fill(Color(BACKGROUND_COLOR))  # Заливаем поверхность сплошным цветом
-    pf = Player(50, 50, img="img/player.png")
+    pf = Player(50, 50, img="img/player3.png")
 
     blocks = [Player(npr.randint(WIN_WIDTH),
                      npr.randint(WIN_HEIGHT),

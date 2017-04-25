@@ -5,6 +5,8 @@ from pygame import *
 from Player import Player
 from event_processing import *
 
+import numpy.random as npr
+
 WIN_WIDTH = 400  # Ширина создаваемого окна
 WIN_HEIGHT = 400  # Высота
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)  # Группируем ширину и высоту в одну переменную
@@ -18,20 +20,23 @@ def main():
     bg = Surface((WIN_WIDTH, WIN_HEIGHT))  # Создание видимой поверхности
     # будем использовать как фон
     bg.fill(Color(BACKGROUND_COLOR))  # Заливаем поверхность сплошным цветом
-    up = right = 0
-    pf = Player(50, 50)
-    timer = pygame.time.Clock()
+    pf = Player(50, 50, img="img/player.png")
 
+    blocks = [Player(npr.randint(WIN_WIDTH),
+                     npr.randint(WIN_HEIGHT),
+                     color = Color(100, 0, 0)) for i in range(10)]
+
+    timer = pygame.time.Clock()
     while 1:
         timer.tick(200)
         for e in pygame.event.get():
             process_player(e, pf)
-
-
-
         pf.update()
 
+
         screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
+
+        [i.draw(screen) for i in blocks]
         pf.draw(screen)
         pygame.display.update()  # обновление и вывод всех изменений на экран
 

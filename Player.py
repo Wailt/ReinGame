@@ -4,7 +4,7 @@
 from pygame import *
 import numpy as np
 
-MOVE_SPEED = 1
+MOVE_SPEED = 2
 WIDTH = 22
 HEIGHT = 32
 COLOR = Color("#000000")
@@ -35,8 +35,10 @@ class Player(sprite.Sprite):
         self.skills = {'athletics': 2.0}
         self.speed = 1
 
+        self.delete = False
+
     def update(self, world):
-        self.speed = MOVE_SPEED * np.log2(1 + (np.log2(self.skills['athletics']))) / 8
+        self.speed = MOVE_SPEED * np.log2(self.skills['athletics']) / 100
         if self.right:
             self.xvel = self.right * self.speed
         else:

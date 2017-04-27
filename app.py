@@ -23,6 +23,7 @@ def main():
     bg = Surface((WIN_WIDTH, WIN_HEIGHT))  # Создание видимой поверхности
     # будем использовать как фон
     bg.fill(Color(BACKGROUND_COLOR))  # Заливаем поверхность сплошным цветом
+
     pf = Player(50, 50, img="img/player3.png")
     stat = Stats(pf)
     blocks = [Player(npr.randint(WIN_WIDTH),
@@ -34,23 +35,29 @@ def main():
 
     timer = pygame.time.Clock()
 
+    step = 0
+
+    try:
+        while 1:
+            step += 1
+            timer.tick(200)
+            for e in pygame.event.get():
+                process_player(e, pf)
+                process_player_object(e, pf, blocks)
+
+            pf.update(blocks)
+            stat.update(pf)
+
+            screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
+            [i.draw(screen) for i in cells + blocks]
+            blocks = [i for i in blocks if not i.delete]
 
 
-
-    while 1:
-        timer.tick(200)
-        for e in pygame.event.get():
-            process_player(e, pf)
-
-        pf.update(blocks)
-        stat.update(pf)
-
-        screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
-        [i.draw(screen) for i in cells + blocks]
-        pf.draw(screen)
-        stat.draw(screen)
-        pygame.display.update()  # обновление и вывод всех изменений на экран
-
+            pf.draw(screen)
+            stat.draw(screen)
+            pygame.display.update()  # обновление и вывод всех изменений на экран
+    except:
+        print('step:', step)
 
 if __name__ == "__main__":
     main()

@@ -8,6 +8,8 @@ from Stats import Stats
 from Text import Text
 from event_processing import *
 
+from time import time
+
 import numpy.random as npr
 
 WIN_WIDTH = 400  # Ширина создаваемого окна
@@ -28,7 +30,7 @@ def main():
     stat = Stats(pf)
     blocks = [Player(npr.randint(WIN_WIDTH),
                      npr.randint(WIN_HEIGHT),
-                     color = Color(100, 0, 0)) for i in range(10)]
+                     color = Color(100, 0, 0)) for i in range(1000)]
 
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
              for j in range(0, WIN_HEIGHT, decore_height)]
@@ -36,7 +38,7 @@ def main():
     timer = pygame.time.Clock()
 
     step = 0
-
+    begin_time = time()
     try:
         while 1:
             step += 1
@@ -48,6 +50,8 @@ def main():
             pf.update(blocks)
             stat.update(pf)
 
+            pf.update_skills()
+
             screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
             [i.draw(screen) for i in cells + blocks]
             blocks = [i for i in blocks if not i.delete]
@@ -56,8 +60,10 @@ def main():
             pf.draw(screen)
             stat.draw(screen)
             pygame.display.update()  # обновление и вывод всех изменений на экран
-    except:
+    except Exception as e:
+        print(e)
         print('step:', step)
+        print('time:', time() - begin_time)
 
 if __name__ == "__main__":
     main()

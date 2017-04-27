@@ -35,6 +35,6 @@ def process_player_object(e, player, obj_list):
     if e.type == KEYDOWN:
         if e.key == K_e:
             for obj in obj_list:
-                if ((player.x - obj.x) ** 2 + (player.y - obj.y) ** 2) ** (0.5) < 100:
-                    obj.delete = True
+                if player.attack(obj):
                     break
+

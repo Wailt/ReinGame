@@ -32,7 +32,9 @@ class Player(sprite.Sprite):
         self.right = 0
         self.up = 0
 
-        self.skills = {'athletics': 2.0}
+        self.skills = {'athletics': 2.0, 'fight': 2.0}
+        self.skills_stack = {key: 0 for key in self.skills.keys()}
+
         self.speed = 1
 
         self.delete = False
@@ -54,7 +56,25 @@ class Player(sprite.Sprite):
         self.y += self.yvel
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
-        self.skills['athletics'] += (self.xvel ** 2 + self.yvel ** 2) ** 0.5
+
+        self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
+
+    def update_skills(self):
+        for key in self.skills_stack:
+            self.skills[key] += self.skills_stack[key]
+            self.skills_stack[key] = 0
+
+    def stack(self, s, val):
+        self.skills_stack[s] += val
+
+    def attack(self, obj):
+        if ((self.x - obj.x) ** 2 + (self.y - obj.y) ** 2) ** (0.5) < 100:
+            self.stack('fight', 1)
+            obj.delete = True
+            return True
+        else:
+            return False
+
 
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x, self.rect.y))

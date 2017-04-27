@@ -33,14 +33,16 @@ class Player(sprite.Sprite):
         self.up = 0
 
         self.skills = {'athletics': 2.0}
+        self.speed = 1
 
     def update(self, world):
+        self.speed = MOVE_SPEED * np.log2(1 + (np.log2(self.skills['athletics']))) / 8
         if self.right:
-            self.xvel = self.right * MOVE_SPEED * np.log2(1 + (np.log2(self.skills['athletics']))) / 8
+            self.xvel = self.right * self.speed
         else:
             self.xvel = 0
         if self.up:
-            self.yvel = self.up * MOVE_SPEED * np.log2(1 + (np.log2(self.skills['athletics'])))/ 8
+            self.yvel = self.up * self.speed
         else:
             self.yvel = 0
 
@@ -57,16 +59,9 @@ class Player(sprite.Sprite):
 
     def collide(self, platforms):
         max_collide = max([sprite.collide_rect(self, p) for p in platforms])
-        if max_collide:  # если есть пересечение платформы с игроком\
-            print('block_collide')
-            print('real', self.x, self.y)
+        if max_collide:
             self.x = self.x_prev_collide
             self.y = self.y_prev_collide
         else:
-            print('not_collide')
-            print('real', self.x, self.y)
             self.x_prev_collide = self.x
             self.y_prev_collide = self.y
-        print('image', self.rect.x, self.rect.y)
-        print('prev', self.x_prev_collide, self.y_prev_collide)
-        print()

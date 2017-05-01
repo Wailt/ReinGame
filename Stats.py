@@ -11,6 +11,7 @@ class Stats(sprite.Sprite):
         self.athletics = Text(0, 15, '2')
         self.fight = Text(0, 30, '3')
         self.speed = Text(0, 45, '4')
+        self.range = Text(0, 60, '5')
         self.update(sp)
 
     def update(self, sp):
@@ -18,9 +19,12 @@ class Stats(sprite.Sprite):
         self.athletics.info = 'athletics:' + str(round(sp.skills['athletics'], 1))
         self.fight.info = 'fight:' + str(round(sp.skills['fight'], 1))
         self.speed.info = 'speed: ' + str(round(sp.speed, 3))
+        self.range.info = 'range:' + str(round(sp.range, 2))
+
 
     def draw(self, screen):
         self.pos.draw(screen)
         self.athletics.draw(screen)
         self.fight.draw(screen)
         self.speed.draw(screen)
+        self.range.draw(screen)

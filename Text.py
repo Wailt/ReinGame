@@ -5,9 +5,9 @@ class Text(sprite.Sprite):
         self.x = x
         self.y = y
         self.info = info
+        self.myfont = font.SysFont("monospace", 14)
         sprite.Sprite.__init__(self)
 
     def draw(self, screen):
-        myfont = font.SysFont("monospace", 14)
-        self.label = myfont.render(self.info, 1, (0, 0, 0))
+        self.label = self.myfont.render(self.info, 1, (0, 0, 0))
         screen.blit(self.label, (self.x, self.y))

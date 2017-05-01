@@ -4,6 +4,8 @@
 from pygame import *
 import numpy as np
 
+from Stats import Stats
+
 MOVE_SPEED = 2
 WIDTH = 22
 HEIGHT = 32
@@ -11,7 +13,7 @@ COLOR = Color("#000000")
 
 
 class Player(sprite.Sprite):
-    def __init__(self, x, y, color=COLOR, img=None):
+    def __init__(self, x, y, color=COLOR, img=None, stat=False):
         sprite.Sprite.__init__(self)
         self.xvel = 0
         self.yvel = 0
@@ -36,7 +38,15 @@ class Player(sprite.Sprite):
         self.skills_stack = {key: 0 for key in self.skills.keys()}
 
         self.speed = 1
+        self.range = 100
 
+        #stat
+        if stat:
+            self.stat = Stats(self)
+        else:
+            self.stat = None
+
+        #notes
         self.delete = False
 
     def update(self, world):
@@ -57,6 +67,9 @@ class Player(sprite.Sprite):
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 
+        if self.stat:
+            self.stat.update(self)
+
         self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
 
     def update_skills(self):
@@ -68,7 +81,8 @@ class Player(sprite.Sprite):
         self.skills_stack[s] += val
 
     def attack(self, obj):
-        if ((self.x - obj.x) ** 2 + (self.y - obj.y) ** 2) ** (0.5) < 100:
+        self.range = 100 + (self.skills['fight']) ** 0.5
+        if ((self.x - obj.x) ** 2 + (self.y - obj.y) ** 2) ** (0.5) < self.range:
             self.stack('fight', 1)
             obj.delete = True
             return True
@@ -77,7 +91,10 @@ class Player(sprite.Sprite):
 
 
     def draw(self, screen):
+        if self.stat:
+            self.stat.draw(screen)
         screen.blit(self.image, (self.rect.x, self.rect.y))
+
 
     def collide(self, platforms):
         max_collide = max([sprite.collide_rect(self, p) for p in platforms])

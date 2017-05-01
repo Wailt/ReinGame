@@ -26,9 +26,9 @@ def main():
     # будем использовать как фон
     bg.fill(Color(BACKGROUND_COLOR))  # Заливаем поверхность сплошным цветом
 
-    pf = Player(50, 50, img="img/main_player.png", stat=True)
-    blocks = [Player(npr.randint(WIN_WIDTH),
-                     npr.randint(WIN_HEIGHT),
+    pf = Player(0, 0, img="img/main_player.png", stat=True)
+    blocks = [Player(npr.randint(WIN_WIDTH / decore_width) * decore_width,
+                     npr.randint(WIN_HEIGHT / decore_height) * decore_height,
                      color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(20)]
 
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
@@ -56,9 +56,9 @@ def main():
             pf.draw(screen)
             pygame.display.update()  # обновление и вывод всех изменений на экран
     except Exception as e:
-        print(e)
         print('step:', step)
         print('time:', time() - begin_time)
+        raise e
 
 
 if __name__ == "__main__":

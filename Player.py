@@ -64,8 +64,8 @@ class Player(sprite.Sprite):
 
         self.x += self.xvel
         self.y += self.yvel
-        self.rect.x = int(self.x)
-        self.rect.y = int(self.y)
+        self.rect.x = int(self.x) * WIDTH
+        self.rect.y = int(self.y) * HEIGHT
 
         if self.stat:
             self.stat.update(self)
@@ -81,23 +81,25 @@ class Player(sprite.Sprite):
         self.skills_stack[s] += val
 
     def attack(self, obj):
-        self.range = 100 + (self.skills['fight']) ** 0.5
-        if ((self.x - obj.x) ** 2 + (self.y - obj.y) ** 2) ** (0.5) < self.range:
+        self.range = 20 + (self.skills['fight'])
+        if ((self.rect.x - obj.x) ** 2 + (self.rect.y - obj.y) ** 2) ** (0.5) <= self.range:
+            #if ((self.rect.x - obj.x) ** 2 + (self.y - obj.y) ** 2) ** (0.5) < self.range:
             self.stack('fight', 1)
             obj.delete = True
             return True
         else:
             return False
 
-
     def draw(self, screen):
         if self.stat:
             self.stat.draw(screen)
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
-
     def collide(self, platforms):
-        max_collide = max([sprite.collide_rect(self, p) for p in platforms])
+        if platforms:
+            max_collide = max([sprite.collide_rect(self, p) for p in platforms])
+        else:
+            max_collide = False
         if max_collide:
             self.x = self.x_prev_collide
             self.y = self.y_prev_collide

@@ -7,8 +7,8 @@ import numpy as np
 from Stats import Stats
 
 MOVE_SPEED = 2
-WIDTH = 22
-HEIGHT = 32
+WIDTH = 20
+HEIGHT = 20
 COLOR = Color("#000000")
 
 

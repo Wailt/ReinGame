@@ -26,10 +26,10 @@ def main():
     # будем использовать как фон
     bg.fill(Color(BACKGROUND_COLOR))  # Заливаем поверхность сплошным цветом
 
-    pf = Player(50, 50, img="img/player3.png", stat=True)
+    pf = Player(50, 50, img="img/main_player.png", stat=True)
     blocks = [Player(npr.randint(WIN_WIDTH),
                      npr.randint(WIN_HEIGHT),
-                     color=Color(100, 0, 0), stat=False) for i in range(2000)]
+                     color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(20)]
 
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
              for j in range(0, WIN_HEIGHT, decore_height)]

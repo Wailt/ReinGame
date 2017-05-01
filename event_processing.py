@@ -31,10 +31,10 @@ def process_player(e, player):
             r, g, b = tuple(map(lambda x: int(x), npr.randint(0, 100, 3)))
             player.image.fill(Color(r, g, b))
 
+
 def process_player_object(e, player, obj_list):
     if e.type == KEYDOWN:
         if e.key == K_e:
             for obj in obj_list:
                 if player.attack(obj):
                     break
-

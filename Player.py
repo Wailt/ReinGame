@@ -4,9 +4,11 @@
 from pygame import *
 import numpy as np
 
+from numpy import random as npr
+
 from Stats import Stats
 
-MOVE_SPEED = 2
+MOVE_SPEED = 1
 WIDTH = 20
 HEIGHT = 20
 COLOR = Color("#000000")
@@ -29,7 +31,7 @@ class Player(sprite.Sprite):
             self.image = image.load(img)
         else:
             self.image.fill(color)
-        self.rect = Rect(x, y, WIDTH, HEIGHT)
+        self.rect = Rect(int(self.x) * WIDTH, int(self.y) * WIDTH, WIDTH, HEIGHT)
 
         self.right = 0
         self.up = 0
@@ -49,13 +51,18 @@ class Player(sprite.Sprite):
         #notes
         self.delete = False
 
-    def update(self, world):
+    def update(self, world, mode='player'):
+        if mode != 'player':
+            self.up = npr.randint(0, 3) - 1
+            self.right = npr.randint(0, 3) - 1
+
+
         self.speed = MOVE_SPEED * np.log2(self.skills['athletics']) / 100
-        if self.right:
+        if self.right != 0:
             self.xvel = self.right * self.speed
         else:
             self.xvel = 0
-        if self.up:
+        if self.up != 0:
             self.yvel = self.up * self.speed
         else:
             self.yvel = 0
@@ -82,8 +89,8 @@ class Player(sprite.Sprite):
 
     def attack(self, obj):
         self.range = 20 + (self.skills['fight'])
-        if ((self.rect.x - obj.x) ** 2 + (self.rect.y - obj.y) ** 2) ** (0.5) <= self.range:
-            #if ((self.rect.x - obj.x) ** 2 + (self.y - obj.y) ** 2) ** (0.5) < self.range:
+        #if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.range:
+        if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.range:
             self.stack('fight', 1)
             obj.delete = True
             return True
@@ -94,7 +101,6 @@ class Player(sprite.Sprite):
         if self.stat:
             self.stat.draw(screen)
         screen.blit(self.image, (self.rect.x, self.rect.y))
-
     def collide(self, platforms):
         if platforms:
             max_collide = max([sprite.collide_rect(self, p) for p in platforms])

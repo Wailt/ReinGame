@@ -27,8 +27,8 @@ def main():
     bg.fill(Color(BACKGROUND_COLOR))  # Заливаем поверхность сплошным цветом
 
     pf = Player(0, 0, img="img/main_player.png", stat=True)
-    blocks = [Player(npr.randint(WIN_WIDTH / decore_width) * decore_width,
-                     npr.randint(WIN_HEIGHT / decore_height) * decore_height,
+    blocks = [Player(npr.randint(WIN_WIDTH / decore_width),
+                     npr.randint(WIN_HEIGHT / decore_height),
                      color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(20)]
 
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
@@ -41,7 +41,7 @@ def main():
     try:
         while 1:
             step += 1
-            timer.tick(200)
+            timer.tick(100)
             for e in pygame.event.get():
                 process_player(e, pf)
                 process_player_object(e, pf, blocks)
@@ -49,8 +49,14 @@ def main():
             pf.update(blocks)
             pf.update_skills()
 
+
+            for i in range(len(blocks)):
+                blocks[i].update(blocks[:i] + blocks[i + 1:], 'npc')
+                blocks[i].update_skills()
+
             screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
-            [i.draw(screen) for i in cells + blocks]
+            [i.draw(screen) for i in cells]
+            [i.draw(screen) for i in blocks]
             blocks = [i for i in blocks if not i.delete]
 
             pf.draw(screen)

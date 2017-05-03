@@ -1,34 +1,58 @@
 from numpy import random as npr
-
+import numpy as np
 class Brain():
     #only for movement
     def __init__(self, npc):
-        self.dec = {'nearst': 1, 'random': 1}
+        self.dec = {'nearest': 0, 'random': 0}
 
     def decide(self, npc, world):
-        x = npc.phisics['x']
-        y = npc.phisics['y']
+        x = npc.phisics['x']()
+        y = npc.phisics['y']()
 
-        sorted_world = sorted(world, key=lambda entity: (entity.phisics['x'] - x)**2 + (entity.phisics['y'] - y)**2)
+        sorted_world = sorted(world, key=lambda entity: (entity.phisics['x']() - x)**2 + (entity.phisics['y']() - y)**2)
 
-        nearest_x, nearest_y = sorted_world[0].phisics['x'], sorted_world[0].phisics['y']
+        nearest_x, nearest_y = sorted_world[0].phisics['x'](), sorted_world[0].phisics['y']()
 
         decision = {'moove': {key: (0, 0) for key in self.dec}}
-        decision['nearest'] = (((x - nearest_x) > 0) * 3 - 1, ((y - nearest_y) > 0) * 3 - 1)
-        decision['random'] = (npr.randint(0, 3) - 1, npr.randint(0, 3) - 1)
 
-        norma = sum([self.dec[i] for i in self.dec])
-
+        #TODO: here without stainding. Add standing in future
+        decision['moove']['nearest'] = (((x - nearest_x) > 0) * 2 - 1, ((y - nearest_y) > 0) * 2 - 1)
+                                        # #(((x - nearest_x) < 0) * 2 - 1, ((y - nearest_y) < 0) * 2 - 1)
+        decision['moove']['random'] = (npr.randint(0, 3) - 1, npr.randint(0, 3) - 1)
+        # TODO: here temperature
+        norma = sum(np.exp(np.array([self.dec[k] for k in self.dec])))
         level = npr.rand()
 
         cumsum = 0
         for key in self.dec:
-            cumsum += self.dec[key] / norma
+            #TODO: here temperature
+            cumsum += np.exp(self.dec[key]) / norma
+
             if cumsum >= level:
-                return (key, decision['key'])
+                return {'moove': (key, decision['moove'][key])}
 
-    def count_regret(self):
-        pass
+    def count_regret(self, npc, world_one_stats, world_two_stats):
+        learn_rate = 0.01
+        regret = {key: (-world_two_stats[key] + world_one_stats[key]) * learn_rate for key in world_one_stats}
+        return regret
 
-    def stat(self):
-        pass
+    def stat(self, npc, world):
+        stats = {'moove': 0}
+
+        x = npc.phisics['x']()
+        y = npc.phisics['y']()
+
+        sorted_world = sorted(world, key=lambda entity: (entity.phisics['x']() - x)**2 + (entity.phisics['y']() - y)**2)
+
+        #TODO: error when world is empty
+        nearest_x, nearest_y = sorted_world[0].phisics['x'](), sorted_world[0].phisics['y']()
+
+        stats['moove'] = ((nearest_x - x) ** 2 + (nearest_y - y) ** 2) ** 0.5
+
+        return stats
+
+    def learn(self, action, regret):
+        #TODO: now works only for moove
+        #TODO: what if many fields in regret. SO i have to make a dict of actions
+        for key in regret:
+            self.dec[action] += regret[key]

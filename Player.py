@@ -8,7 +8,7 @@ from pygame import *
 from Brain import Brain
 from Stats import Stats
 
-from copy import deepcopy
+from copy import deepcopy, copy
 
 MOVE_SPEED = 1
 WIDTH = 20
@@ -57,14 +57,13 @@ class Player(sprite.Sprite):
         self.delete = False
 
         # brain
-        self.brain = Brain()
+        self.brain = Brain(self)
 
     def update(self, world, mode='player'):
         self.moove(world, mode=mode)
         self.update_skills()
         if self.stat:
             self.stat.update(self)
-
 
     def update_skills(self):
         for key in self.skills_stack:
@@ -75,13 +74,14 @@ class Player(sprite.Sprite):
         self.skills_stack[s] += val
 
     def moove(self, world, mode='player'):
-        old_world_stat = self.brain.stat(self, deepcopy(world))
+        old_world_stat = self.brain.stat(self, world)
         # mooving
 
         #making decision
         if mode != 'player':
             dicision = self.brain.decide(self, world)
-            key = dicision['moove'][0]
+            #TODO: make a dict of actions
+            action = dicision['moove'][0]
             self.right = dicision['moove'][1][0]  # npr.randint(0, 3) - 1
             self.up = dicision['moove'][1][1]#npr.randint(0, 3) - 1
 
@@ -96,7 +96,7 @@ class Player(sprite.Sprite):
 
         self.collide(world)
 
-        if 0 <= self.x + self.xvel < 400 and 0 <= self.y + self.yvel < 400:
+        if 0 <= self.x + self.xvel < 400 / 20 and 0 <= self.y + self.yvel < 400 / 20:
             self.x += self.xvel
             self.y += self.yvel
             self.rect.x = int(self.x) * WIDTH
@@ -105,8 +105,10 @@ class Player(sprite.Sprite):
             self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
 
         #count regret
-        new_world_stat = self.brain.stat(self, world)
-        regrets = self.brain.count_regret(old_world_stat, new_world_stat)
+        if mode != 'player':
+            new_world_stat = self.brain.stat(self, world)
+            regrets = self.brain.count_regret('here npc', old_world_stat, new_world_stat)
+            self.brain.learn(action, regrets)
 
     def attack(self, obj):
         if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.phisics['range']():

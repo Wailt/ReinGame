@@ -47,12 +47,10 @@ def main():
                 process_player_object(e, pf, blocks)
 
             pf.update(blocks)
-            pf.update_skills()
-
 
             for i in range(len(blocks)):
+                #TODO: hard place how to do the same without creation new list?
                 blocks[i].update(blocks[:i] + blocks[i + 1:], 'npc')
-                blocks[i].update_skills()
 
             screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
             [i.draw(screen) for i in cells]

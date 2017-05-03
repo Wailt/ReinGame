@@ -51,7 +51,22 @@ class Player(sprite.Sprite):
         self.delete = False
 
     def update(self, world, mode='player'):
-        #mooving
+        self.moove(world, mode=mode)
+        self.update_skills()
+        if self.stat:
+            self.stat.update(self)
+
+
+    def update_skills(self):
+        for key in self.skills_stack:
+            self.skills[key] += self.skills_stack[key]
+            self.skills_stack[key] = 0
+
+    def stack(self, s, val):
+        self.skills_stack[s] += val
+
+    def moove(self, world, mode='player'):
+        # mooving
         if mode != 'player':
             self.up = npr.randint(0, 3) - 1
             self.right = npr.randint(0, 3) - 1
@@ -74,20 +89,6 @@ class Player(sprite.Sprite):
             self.rect.y = int(self.y) * HEIGHT
 
             self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
-
-        #stats
-        if self.stat:
-            self.stat.update(self)
-
-
-
-    def update_skills(self):
-        for key in self.skills_stack:
-            self.skills[key] += self.skills_stack[key]
-            self.skills_stack[key] = 0
-
-    def stack(self, s, val):
-        self.skills_stack[s] += val
 
     def attack(self, obj):
         if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.phisics['range']():

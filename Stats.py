@@ -8,24 +8,23 @@ class Stats(sprite.Sprite):
         sprite.Sprite.__init__(self)
 
         self.skills = dict()
+        self.phisics = dict()
 
         n = -1
         height = 15
         for skill in sp.skills:
             n += 1
-            self.skills[skill] = Text(x=0, y=n * height)
+            self.skills[skill] = Text(y=n * height)
 
-        self.phisics = {'pos': Text(y=(n + 1) * height),
-                        'speed': Text(y=(n + 2) * height),
-                        'range': Text(y=(n + 3) * height)
-                        }
+        for phisic in sp.phisics:
+            n += 1
+            self.phisics[phisic] = Text(y=n * height)
 
         self.update(sp)
 
     def update(self, sp):
-        self.phisics['pos'].info = 'x:' + str(int(sp.x)) + ', y:' + str(int(sp.y))
-        self.phisics['speed'].info = 'speed: ' + str(round(sp.phisics['speed'](), 3))
-        self.phisics['range'].info = 'range:' + str(round(sp.phisics['range'](), 2))
+        for key in self.phisics:
+            self.phisics[key].info = key + ': ' + str(round(sp.phisics[key](), 3))
 
         for key in self.skills:
             self.skills[key].info = key + ':' + str(round(sp.skills[key], 1))

@@ -5,7 +5,10 @@ import numpy as np
 from numpy import random as npr
 from pygame import *
 
+from Brain import Brain
 from Stats import Stats
+
+from copy import deepcopy
 
 MOVE_SPEED = 1
 WIDTH = 20
@@ -39,7 +42,10 @@ class Player(sprite.Sprite):
         self.skills_stack = {key: 0 for key in self.skills.keys()}
 
         self.phisics = {'speed': lambda: MOVE_SPEED * np.log2(self.skills['athletics']) / 100,
-                        'range': lambda: (self.skills['fight']) ** 0.5 + 20}
+                        'range': lambda: (self.skills['fight']) ** 0.5 + 20,
+                        'x': lambda: self.x,
+                        'y': lambda: self.y,
+                        }
 
         # stat
         if stat:
@@ -49,6 +55,9 @@ class Player(sprite.Sprite):
 
         # notes
         self.delete = False
+
+        # brain
+        self.brain = Brain()
 
     def update(self, world, mode='player'):
         self.moove(world, mode=mode)
@@ -66,10 +75,15 @@ class Player(sprite.Sprite):
         self.skills_stack[s] += val
 
     def moove(self, world, mode='player'):
+        old_world_stat = self.brain.stat(self, deepcopy(world))
         # mooving
+
+        #making decision
         if mode != 'player':
-            self.up = npr.randint(0, 3) - 1
-            self.right = npr.randint(0, 3) - 1
+            dicision = self.brain.decide(self, world)
+            key = dicision['moove'][0]
+            self.right = dicision['moove'][1][0]  # npr.randint(0, 3) - 1
+            self.up = dicision['moove'][1][1]#npr.randint(0, 3) - 1
 
         if self.right != 0:
             self.xvel = self.right * self.phisics['speed']()
@@ -89,6 +103,10 @@ class Player(sprite.Sprite):
             self.rect.y = int(self.y) * HEIGHT
 
             self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
+
+        #count regret
+        new_world_stat = self.brain.stat(self, world)
+        regrets = self.brain.count_regret(old_world_stat, new_world_stat)
 
     def attack(self, obj):
         if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.phisics['range']():

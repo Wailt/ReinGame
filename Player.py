@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pygame import *
 import numpy as np
-
 from numpy import random as npr
+from pygame import *
 
 from Stats import Stats
 
@@ -36,48 +35,51 @@ class Player(sprite.Sprite):
         self.right = 0
         self.up = 0
 
-        self.skills = {'athletics': 2.0, 'fight': 2.0}
+        self.skills = {'athletics': 2.0, 'fight': 0.0}
         self.skills_stack = {key: 0 for key in self.skills.keys()}
 
-        self.speed = 1
-        self.range = 100
+        self.phisics = {'speed': lambda: MOVE_SPEED * np.log2(self.skills['athletics']) / 100,
+                        'range': lambda: (self.skills['fight']) ** 0.5 + 20}
 
-        #stat
+        # stat
         if stat:
             self.stat = Stats(self)
         else:
             self.stat = None
 
-        #notes
+        # notes
         self.delete = False
 
     def update(self, world, mode='player'):
+        #mooving
         if mode != 'player':
             self.up = npr.randint(0, 3) - 1
             self.right = npr.randint(0, 3) - 1
 
-
-        self.speed = MOVE_SPEED * np.log2(self.skills['athletics']) / 100
         if self.right != 0:
-            self.xvel = self.right * self.speed
+            self.xvel = self.right * self.phisics['speed']()
         else:
             self.xvel = 0
         if self.up != 0:
-            self.yvel = self.up * self.speed
+            self.yvel = self.up * self.phisics['speed']()
         else:
             self.yvel = 0
 
         self.collide(world)
 
-        self.x += self.xvel
-        self.y += self.yvel
-        self.rect.x = int(self.x) * WIDTH
-        self.rect.y = int(self.y) * HEIGHT
+        if 0 <= self.x + self.xvel < 400 and 0 <= self.y + self.yvel < 400:
+            self.x += self.xvel
+            self.y += self.yvel
+            self.rect.x = int(self.x) * WIDTH
+            self.rect.y = int(self.y) * HEIGHT
 
+            self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
+
+        #stats
         if self.stat:
             self.stat.update(self)
 
-        self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
+
 
     def update_skills(self):
         for key in self.skills_stack:
@@ -88,9 +90,7 @@ class Player(sprite.Sprite):
         self.skills_stack[s] += val
 
     def attack(self, obj):
-        self.range = 20 + (self.skills['fight'])
-        #if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.range:
-        if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.range:
+        if ((self.rect.x - obj.rect.x) ** 2 + (self.rect.y - obj.rect.y) ** 2) ** (0.5) <= self.phisics['range']():
             self.stack('fight', 1)
             obj.delete = True
             return True
@@ -101,6 +101,7 @@ class Player(sprite.Sprite):
         if self.stat:
             self.stat.draw(screen)
         screen.blit(self.image, (self.rect.x, self.rect.y))
+
     def collide(self, platforms):
         if platforms:
             max_collide = max([sprite.collide_rect(self, p) for p in platforms])

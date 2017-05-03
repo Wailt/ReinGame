@@ -24,8 +24,8 @@ class Stats(sprite.Sprite):
 
     def update(self, sp):
         self.phisics['pos'].info = 'x:' + str(int(sp.x)) + ', y:' + str(int(sp.y))
-        self.phisics['speed'].info = 'speed: ' + str(round(sp.speed, 3))
-        self.phisics['range'].info = 'range:' + str(round(sp.range, 2))
+        self.phisics['speed'].info = 'speed: ' + str(round(sp.phisics['speed'](), 3))
+        self.phisics['range'].info = 'range:' + str(round(sp.phisics['range'](), 2))
 
         for key in self.skills:
             self.skills[key].info = key + ':' + str(round(sp.skills[key], 1))

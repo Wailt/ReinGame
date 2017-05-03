@@ -29,7 +29,7 @@ def main():
     pf = Player(0, 0, img="img/main_player.png", stat=True)
     blocks = [Player(npr.randint(WIN_WIDTH / decore_width),
                      npr.randint(WIN_HEIGHT / decore_height),
-                     color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(20)]
+                     color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(10)]
 
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
              for j in range(0, WIN_HEIGHT, decore_height)]

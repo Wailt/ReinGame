@@ -48,14 +48,9 @@ def main():
                 process_player_object(e, pf, blocks)
                 process_windows(e, pf, blocks)
 
-
-            #pf.update(blocks)
-
             for i in range(len(blocks)):
-                #TODO: hard place. how to do the same without creation new list?
                 #TODO: possible to make multythread
-                #blocks[i].update(blocks[:i] + blocks[i + 1:])
-                blocks[i].update(blocks, i)
+                blocks[i].update(blocks)
 
             #TODO: replace to another place
             if step % 4 == 0:

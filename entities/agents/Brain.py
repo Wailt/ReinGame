@@ -16,7 +16,7 @@ class Brain():
         if world:
             sorted_world = sorted(world, key=lambda entity: (entity.phisics['x']() - x)**2 + (entity.phisics['y']() - y)**2)
 
-            nearest_x, nearest_y = sorted_world[0].phisics['x'](), sorted_world[0].phisics['y']()
+            nearest_x, nearest_y = sorted_world[1].phisics['x'](), sorted_world[1].phisics['y']()
 
             decision = {'moove': {key: (0, 0) for key in self.dec}}
 
@@ -55,7 +55,7 @@ class Brain():
             sorted_world = sorted(world, key=lambda entity: (entity.phisics['x']() - x)**2 + (entity.phisics['y']() - y)**2)
 
             #TODO: error when world is empty
-            nearest_x, nearest_y = sorted_world[0].phisics['x'](), sorted_world[0].phisics['y']()
+            nearest_x, nearest_y = sorted_world[1].phisics['x'](), sorted_world[1].phisics['y']()
 
             stats['moove'] = ((nearest_x - x) ** 2 + (nearest_y - y) ** 2) ** 0.5
 

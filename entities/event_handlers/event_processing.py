@@ -38,3 +38,12 @@ def process_player_object(e, player, obj_list):
             for obj in obj_list:
                 if player.attack(obj):
                     break
+
+
+def process_windows(e, player, world):
+    if e.type == KEYDOWN and e.key == K_TAB:
+        stop = True
+        while stop:
+            for e in pygame.event.get():
+                if e.type == KEYDOWN and e.key == K_TAB:
+                    stop = False

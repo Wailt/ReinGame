@@ -31,7 +31,7 @@ class Brain():
 
             cumsum = 0
 
-            print(np.exp([temperature * self.dec[key] for key in self.dec]) / norma)
+            # print(np.exp([temperature * self.dec[key] for key in self.dec]) / norma)
 
             for key in self.dec:
                 #TODO: here temperature

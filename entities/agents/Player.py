@@ -8,7 +8,6 @@ from pygame import *
 from entities.agents.Brain import Brain
 from entities.agents.Stats import Stats
 
-from copy import deepcopy, copy
 
 MOVE_SPEED = 1
 WIDTH = 20

@@ -28,7 +28,7 @@ def main():
     pf = Player(0, 0, img="img/main_player.png", stat=True, mode='player')
     blocks = [Player(npr.randint(WIN_WIDTH / decore_width),
                      npr.randint(WIN_HEIGHT / decore_height),
-                     color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(1)]
+                     color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(30)]
 
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
              for j in range(0, WIN_HEIGHT, decore_height)]
@@ -44,21 +44,26 @@ def main():
             for e in pygame.event.get():
                 process_player(e, pf)
                 process_player_object(e, pf, blocks)
+                process_windows(e, pf, blocks)
+
 
             pf.update(blocks)
 
             for i in range(len(blocks)):
-                #TODO: hard place how to do the same without creation new list?
+                #TODO: hard place. how to do the same without creation new list?
                 #TODO: possible to make multythread
                 blocks[i].update(blocks[:i] + blocks[i + 1:] + [pf])
 
-            screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
-            [i.draw(screen) for i in cells]
-            [i.draw(screen) for i in blocks]
-            blocks = [i for i in blocks if not i.delete]
+            #TODO: replace to another place
+            if step % 4 == 0:
+                screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
+                [i.draw(screen) for i in cells]
+                [i.draw(screen) for i in blocks]
+                blocks = [i for i in blocks if not i.delete]
 
-            pf.draw(screen)
-            pygame.display.update()  # обновление и вывод всех изменений на экран
+                pf.draw(screen)
+                pygame.display.update()  # обновление и вывод всех изменений на экран
+                print('step:', step/(time() - begin_time))
     except Exception as e:
         print('step:', step)
         print('time:', time() - begin_time)

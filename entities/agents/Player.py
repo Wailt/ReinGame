@@ -5,8 +5,8 @@ import numpy as np
 from numpy import random as npr
 from pygame import *
 
-from Brain import Brain
-from Stats import Stats
+from entities.agents.Brain import Brain
+from entities.agents.Stats import Stats
 
 from copy import deepcopy, copy
 
@@ -17,12 +17,14 @@ COLOR = Color("#000000")
 
 
 class Player(sprite.Sprite):
-    def __init__(self, x, y, color=COLOR, img=None, stat=False):
+    def __init__(self, x, y, color=COLOR, img=None, stat=False, mode='npc'):
         sprite.Sprite.__init__(self)
         self.xvel = 0
         self.yvel = 0
         self.x = x
         self.y = y
+
+        self.mode = mode
 
         self.x_prev_collide = self.x
         self.y_prev_collide = self.y
@@ -59,8 +61,8 @@ class Player(sprite.Sprite):
         # brain
         self.brain = Brain(self)
 
-    def update(self, world, mode='player'):
-        self.moove(world, mode=mode)
+    def update(self, world):
+        self.moove(world)
         self.update_skills()
         if self.stat:
             self.stat.update(self)
@@ -73,12 +75,12 @@ class Player(sprite.Sprite):
     def stack(self, s, val):
         self.skills_stack[s] += val
 
-    def moove(self, world, mode='player'):
+    def moove(self, world):
         old_world_stat = self.brain.stat(self, world)
         # mooving
 
         #making decision
-        if mode != 'player':
+        if self.mode != 'player':
             dicision = self.brain.decide(self, world)
             #TODO: make a dict of actions
             action = dicision['moove'][0]
@@ -105,7 +107,7 @@ class Player(sprite.Sprite):
             self.stack('athletics', (self.xvel ** 2 + self.yvel ** 2) ** 0.5)
 
         #count regret
-        if mode != 'player':
+        if self.mode != 'player':
             new_world_stat = self.brain.stat(self, world)
             regrets = self.brain.count_regret('here npc', old_world_stat, new_world_stat)
             self.brain.learn(action, regrets)

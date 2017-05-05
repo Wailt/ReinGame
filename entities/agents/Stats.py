@@ -1,6 +1,6 @@
 from pygame import *
 
-from Text import Text
+from entities.agents.Text import Text
 
 
 class Stats(sprite.Sprite):

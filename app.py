@@ -2,11 +2,10 @@
 import pygame
 from pygame import *
 
-from Decore import *
-from Player import Player
-from Stats import Stats
-from Text import Text
-from event_processing import *
+from entities.decore.Decore import *
+
+from entities.agents.Player import Player
+from entities.event_handlers.event_processing import *
 
 from time import time
 
@@ -26,10 +25,10 @@ def main():
     # будем использовать как фон
     bg.fill(Color(BACKGROUND_COLOR))  # Заливаем поверхность сплошным цветом
 
-    pf = Player(0, 0, img="img/main_player.png", stat=True)
+    pf = Player(0, 0, img="img/main_player.png", stat=True, mode='player')
     blocks = [Player(npr.randint(WIN_WIDTH / decore_width),
                      npr.randint(WIN_HEIGHT / decore_height),
-                     color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(10)]
+                     color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(1)]
 
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
              for j in range(0, WIN_HEIGHT, decore_height)]
@@ -51,7 +50,7 @@ def main():
             for i in range(len(blocks)):
                 #TODO: hard place how to do the same without creation new list?
                 #TODO: possible to make multythread
-                blocks[i].update(blocks[:i] + blocks[i + 1:], 'npc')
+                blocks[i].update(blocks[:i] + blocks[i + 1:] + [pf])
 
             screen.blit(bg, (0, 0))  # Каждую итерацию необходимо всё перерисовывать
             [i.draw(screen) for i in cells]

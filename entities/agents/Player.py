@@ -60,8 +60,8 @@ class Player(sprite.Sprite):
         # brain
         self.brain = Brain(self)
 
-    def update(self, world):
-        self.moove(world)
+    def update(self, world, agent_id):
+        self.moove(world, agent_id)
         self.update_skills()
         if self.stat:
             self.stat.update(self)
@@ -74,7 +74,7 @@ class Player(sprite.Sprite):
     def stack(self, s, val):
         self.skills_stack[s] += val
 
-    def moove(self, world):
+    def moove(self, world, agent_id):
         old_world_stat = self.brain.stat(self, world)
         # mooving
 
@@ -95,7 +95,7 @@ class Player(sprite.Sprite):
         else:
             self.yvel = 0
 
-        self.collide(world)
+        self.collide(world, agent_id)
 
         if 0 <= self.x + self.xvel < 400 / 20 and 0 <= self.y + self.yvel < 400 / 20:
             self.x += self.xvel
@@ -124,9 +124,9 @@ class Player(sprite.Sprite):
             self.stat.draw(screen)
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
-    def collide(self, platforms):
+    def collide(self, platforms, agent_id):
         if platforms:
-            max_collide = max([sprite.collide_rect(self, p) for p in platforms])
+            max_collide = max([sprite.collide_rect(self, platforms[p]) for p in range(len(platforms)) if p != agent_id])
         else:
             max_collide = False
         if max_collide:

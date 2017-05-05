@@ -30,6 +30,8 @@ def main():
                      npr.randint(WIN_HEIGHT / decore_height),
                      color=Color(100, 0, 0), stat=False, img='img/enemy.png') for i in range(30)]
 
+    blocks += [pf]
+
     cells = [Decore(i, j, "img/cell.png") for i in range(0, WIN_WIDTH, decore_width)
              for j in range(0, WIN_HEIGHT, decore_height)]
 
@@ -47,12 +49,13 @@ def main():
                 process_windows(e, pf, blocks)
 
 
-            pf.update(blocks)
+            #pf.update(blocks)
 
             for i in range(len(blocks)):
                 #TODO: hard place. how to do the same without creation new list?
                 #TODO: possible to make multythread
-                blocks[i].update(blocks[:i] + blocks[i + 1:] + [pf])
+                #blocks[i].update(blocks[:i] + blocks[i + 1:])
+                blocks[i].update(blocks, i)
 
             #TODO: replace to another place
             if step % 4 == 0:
